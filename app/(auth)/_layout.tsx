@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
@@ -13,7 +11,7 @@ import Role from '@/app/(auth)/role';
 const Stack = createNativeStackNavigator();
 
 
-export default function AuthLayout() {
+const AuthLayout = () => {
   return (
       <Stack.Navigator initialRouteName="index">
         <Stack.Screen name="index" component={LandingPage} options={{ headerShown: false}} />
@@ -23,3 +21,6 @@ export default function AuthLayout() {
       </Stack.Navigator>
   );
 }
+
+
+export default AuthLayout;

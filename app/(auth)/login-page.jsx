@@ -2,32 +2,38 @@ import React, { useState} from "react";
 import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity, Alert, TextInput } from "react-native";
 import IctLogo from "@/assets/images/ictlogo.png";
 import Feather from "@expo/vector-icons/Feather";
-import {Link } from "expo-router";
+import {Link, useRouter } from "expo-router";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
+import { auth } from '@/firebaseConfig';
+import { signInWithEmailAndPassword } from "firebase/auth";
 //this is the landing page
+
 
 const LoginPage = () => {
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isValidEmail, setIsValidEmail] = useState(false);
-
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-    const handlePress = () => {
-    // Disable the button
-    setIsButtonDisabled(true);
-
-    // Show an alert or perform an action
-    Alert.alert("Button Pressed", "The button has been temporarily disabled.");
-
-    // Re-enable the button after 3 seconds (3000 milliseconds)
-    setTimeout(() => {
-      setIsButtonDisabled(false);
-    }, 3000);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+  
+    const handleLogin = async () => {
+      if (!email || !password) {
+        Alert.alert('Error', 'Please fill in all fields');
+        return;
+      }
+  
+      setLoading(true);
+  
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        router.replace('/(apptabs)/map'); //redirect to map page
+        Alert.alert('Success', 'Login successful!');
+      } catch (error) {
+        Alert.alert('Error', error.message);
+      } finally {
+        setLoading(false);
+      }
   };
-
 
 
   return (
@@ -39,25 +45,30 @@ const LoginPage = () => {
             placeholder="Email address"
             value={email}
             editable={true}
+            onChangeText={(text) => setEmail(text)}
         />
         <TextInput 
             style={styles.input}
             placeholder="Password"
             value={password}
+            editable={true}
+            onChangeText={(text) => setPassword(text)}
             secureTextEntry
         />
 
-`       <Link href="/(apptabs)/map"  asChild>
-        <Pressable>
-          <Text style={styles.buttonText}> OK</Text>
+`       
+        <Pressable
+        onPress={handleLogin}
+        >
+          <Text style={styles.buttonText}> Login</Text>
+          
         </Pressable>
-        </Link>
 
         <Link href="/register-page"  asChild>
         <Pressable>
-          <Text style={styles.buttonText} >Sign up </Text>
+          <Text style={styles.buttonText} >Register </Text>
         </Pressable>
-      </Link>
+        </Link>
 
       <FontAwesome name='road' size={200} color="black" style={styles.roadlogo} />
     </View>
