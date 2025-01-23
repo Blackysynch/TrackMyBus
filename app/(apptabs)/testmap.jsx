@@ -1,50 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-const MapScreen = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
+import useLocation from '@/hooks/useLocation';
 
-  const updateLocation = () => {
-    setIsLoading(true); // Show loading animation
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ latitude, longitude });
-        setIsLoading(false); // Hide loading animation
-      },
-      (error) => {
-        console.error('Error fetching location:', error);
-        setIsLoading(false); // Hide loading animation in case of error
-      },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-    );
-  };
+const MapScreen = () => {
+  const {latitude, longitude, errorMsg } = useLocation(); 
+
+  const [markerLocation, setMarkerLocation] = useState({
+    latitude: 3.844119, // Initial latitude
+    longitude: 11.501346, // Initial longitude
+  });
+
+
+  useEffect(() => {
+    if (latitude && longitude) {
+      setMarkerLocation({
+        latitude,
+        longitude,
+      });
+    }
+  }, [latitude, longitude]);
+
+  // useEffect(() => {
+  //   if (location) {
+  //     setMarkerLocation({
+  //       latitude: location.latitude,
+  //       longitude: location.longitude,
+  //     });
+  //   }
+  // }, [location]);
+
+  // Set up an interval to refresh the location every 5 seconds
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //       setMarkerLocation({
+  //         latitude: Number(location.latitude),
+  //         longitude: Number(location.longitude),
+  //       });
+
+  //       console.log('the markerLocation:', markerLocation); // Print the markerLocation state to the console
+  //   }, 5000);
+
+  //   return () => clearInterval(interval); // Clean up the interval
+  // }, []);
+
+
 
   return (
     <View style={styles.container}>
       <MapView
-        style={styles.map}
-        region={
-          userLocation
-            ? {
-                latitude: userLocation.latitude,
-                longitude: userLocation.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }
-            : null
-        }
+      style={styles.map}
+      initialRegion={{
+        latitude: markerLocation.latitude,
+        longitude: markerLocation.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
+      }
       >
-        {userLocation && <Marker coordinate={userLocation} />}
+        <Marker
+          coordinate={{
+            latitude: markerLocation.latitude, 
+            longitude: markerLocation.longitude,
+          }}
+          title="Marker User Title"
+          description="This is a user position"
+        />
       </MapView>
-
-      {isLoading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
     </View>
   );
 };

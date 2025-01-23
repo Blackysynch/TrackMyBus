@@ -66,6 +66,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Feather name="file-text" size={24} color="black" />,
         }}
       />
+      <Tabs.Screen
+        name="testmap"
+        options={{
+          title: 'testmap',
+          tabBarIcon: ({ color }) => <Feather name="map" size={24} color="black" />,
+        }}
+      />
 
       {/* last icon should be a checkmark */}
 

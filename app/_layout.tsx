@@ -10,6 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 
 import AuthLayout from './(auth)/_layout';
+import app from '../firebaseConfig';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
