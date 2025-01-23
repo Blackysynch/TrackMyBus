@@ -6,7 +6,7 @@ import {Link , useRouter} from "expo-router";
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebaseConfig";
-import { doc, setDoc, addDoc, collection, GeoPoint} from "@firebase/firestore"
+import { doc, setDoc} from "@firebase/firestore";
 
 //this is the landing page
 

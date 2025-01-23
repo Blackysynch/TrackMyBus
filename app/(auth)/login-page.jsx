@@ -1,11 +1,13 @@
-import React, { useState} from "react";
+import React, { useRef, useState} from "react";
 import { View, Text, StyleSheet, Image, Pressable, Alert, TextInput } from "react-native";
 import IctLogo from "@/assets/images/ictlogo.png";
 import {Link, useRouter } from "expo-router";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { auth , db} from '@/firebaseConfig';
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc, collection, getDocs } from "@firebase/firestore";
+
+import { doc, getDoc } from "@firebase/firestore";
+//import { doc, getDoc, collection, getDocs } from "@firebase/firestore";
 //this is the landing page
 
 
@@ -29,6 +31,17 @@ const LoginPage = () => {
         const user = userCredential.user;
         console.log("User  logged in:", user.uid);
         router.replace("/(apptabs)/map");
+
+
+        const userRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          console.log('User role:', userData.role);
+        } else {
+          console.log('No user data found');
+        }
         // const userId = auth.currentUser.uid;
         // const profileCollectionRef = collection(db, 'users', userId, 'profile'); // Reference the profile collection
 

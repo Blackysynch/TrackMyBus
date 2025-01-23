@@ -2,7 +2,6 @@ import { StyleSheet, Text, TouchableOpaciy, View } from "react-native";
 import React, {useEffect, useState} from 'react';
 import * as Location from "expo-location";
 
-
 //every thign was ok here
 const useLocation = () => {
     const [errorMsg, setErrorMsg] = useState("", "");
@@ -20,7 +19,7 @@ const useLocation = () => {
     
     
         let {coords} = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
+          accuracy: Location.Accuracy.High,
           timeout: 10000,
         });
     

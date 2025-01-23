@@ -3,6 +3,8 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
 import useLocation from '@/hooks/useLocation';
+import { auth, db } from "@/firebaseConfig";
+import { doc, getDoc, collection, getDocs } from "@firebase/firestore";
 
 const MapScreen = () => {
   const {latitude, longitude, errorMsg } = useLocation(); 
