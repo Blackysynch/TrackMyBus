@@ -12,7 +12,7 @@ const MapScreen = () => {
     longitude: 11.501346, // Initial longitude
   });
 
-
+//at this point it was working fine
   useEffect(() => {
     if (latitude && longitude) {
       setMarkerLocation({
@@ -22,6 +22,15 @@ const MapScreen = () => {
     }
   }, [latitude, longitude]);
 
+  if (errorMsg) {
+    return (
+      <View>
+        <Text>Error: {errorMsg}</Text>
+      </View>
+    );
+  }
+
+  console.log("the longitude and latitudes are:", longitude, latitude);
   // useEffect(() => {
   //   if (location) {
   //     setMarkerLocation({
@@ -46,7 +55,6 @@ const MapScreen = () => {
   // }, []);
 
 
-
   return (
     <View style={styles.container}>
       <MapView
@@ -59,14 +67,15 @@ const MapScreen = () => {
       }
       }
       >
-        <Marker
-          coordinate={{
-            latitude: markerLocation.latitude, 
-            longitude: markerLocation.longitude,
-          }}
-          title="Marker User Title"
-          description="This is a user position"
-        />
+
+          <Marker
+            coordinate={{
+              latitude: markerLocation.latitude,
+              longitude: markerLocation.longitude,
+            }}
+            title="Marker User Title"
+            description="This is a user position"
+          />
       </MapView>
     </View>
   );

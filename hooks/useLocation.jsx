@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import * as Location from "expo-location";
 
 
+//every thign was ok here
 const useLocation = () => {
     const [errorMsg, setErrorMsg] = useState("", "");
     const [latitude, setLatitude] = useState("");
@@ -18,25 +19,30 @@ const useLocation = () => {
         }
     
     
-        let {coords} = await Location.getCurrentPositionAsync();
+        let {coords} = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeout: 10000,
+        });
     
         if (coords) {
           const {latitude, longitude} = coords;
-          console.log("lat and long is ", latitude, longitude )
+          // console.log("lat and long is ", latitude, longitude )
           setLatitude(latitude);
           setLongitude(longitude);
     
-          let response = await Location.reverseGeocodeAsync({
-            latitude,
-            longitude
-          })
+          // let response = await Location.reverseGeocodeAsync({
+          //   latitude,
+          //   longitude
+          // })
     
-          console.log('USER LOCATION IS', response);
+          // console.log('USER LOCATION IS', response);
         }
       };
 
       useEffect(() => {
-        getUserLocation();
+        const intervalID = setInterval(getUserLocation, 2000);
+
+        return () => clearInterval(intervalID);
       }, [])
     
     return { latitude, longitude, errorMsg};
