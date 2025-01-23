@@ -1,66 +1,29 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
 import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity, Alert, TextInput } from "react-native";
 import IctLogo from "@/assets/images/ictlogo.png";
-import Feather from "@expo/vector-icons/Feather";
 import {Link , useRouter} from "expo-router";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+// import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebaseConfig";
-import { doc, setDoc, addDoc, collection} from "@firebase/firestore"
+import { doc, setDoc, addDoc, collection, GeoPoint} from "@firebase/firestore"
 
 //this is the landing page
 
 const RegisterPage = () => {
-
-     const [username, setUserName] = useState('');
-     const [email, setEmail] = useState('');
-     const [phoneNumber, setPhoneNumber] = useState('');
-     const [password, setPassword] = useState('');
-     const [confirmPassword, setConfirmPassword] = useState("")
-     const [role, setRole] = useState('Student'); //default is student
-
-     const [loading, setLoading] = useState(false);
-
-  //    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  //   const handlePress = () => {
-  //     // Disable the button
-  //     setIsButtonDisabled(true);
-
-  //     // Show an alert or perform an action
-  //     Alert.alert("Button Pressed", "The button has been temporarily disabled.");
-
-  //     // Re-enable the button after 3 seconds (3000 milliseconds)
-  //     setTimeout(() => {
-  //       setIsButtonDisabled(false);
-  //     }, 3000);
-  // };
-
-
-  // const validateEmail = (email) => {
-  //   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  //   return emailRegex.test(email);
-  // };
-
-  // const handleSubmit = () => {
-  //   if (!uname || !email || !phoneNumber || !password || !role) {
-  //     Alert.alert("Error", "Please fill in all fields.");
-  //     return;
-  //   }
-
-  //   if (!validateEmail(email)) {
-  //     Alert.alert("Error", "Invalid email address.");
-  //     return;
-  //   }
-
-  //   // Here you can add your API call to register the user
-  //   // For now, it just shows an alert
-  //   Alert.alert("Success", "Registration successful!");
-  // };
-
-
+  
+  const [username, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [role, setRole] = useState('Student'); //default is student
+    
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+
+
   const handleRegister = async () => {
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match.");
@@ -78,18 +41,28 @@ const RegisterPage = () => {
       // Step 1: Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("User created")
-      const user = userCredential.user;
-
+      const user = userCredential.user;//this is before major change
       
-      router.replace("/login-page");
-      // Step 2: Save additional user details in Firestore
-      await addDoc(collection(db, "users", user.uid, 'profile'), {
+      try{
+      // Step 3: Save additional user data to Firestore
+      await setDoc(doc(db, "/users", user.uid), {
         username,
         email,
         phoneNumber,
         role,
+        location: null,// location ? new GeoPoint(location.latitude, location.longitude) : null,
+        // location: {
+        //   latitude: location.latitude,
+        //   longitude: location.longitude,
+        // },
         createdAt: new Date().toISOString(),
       });
+      console.log("User data saved to Firestore");
+    }catch (error) {
+      console.error("Error saving user data to Firestore:", error.message);
+    }
+
+      router.replace("/login-page");
       console.log('User details saved');
       // Redirect to login page or home page after successful registration
       console.log("User  registered and details saved:", user.uid);
@@ -104,6 +77,7 @@ const RegisterPage = () => {
       router.replace('/login-page');
     }
   };
+
 
 
   return (
