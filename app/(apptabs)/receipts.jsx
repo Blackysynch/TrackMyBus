@@ -132,7 +132,7 @@ const ReceiptsPage = () => {
       <FlatList
         data={userData.receipts || []}
         renderItem={renderReceipt}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id || Math.random().toString()}
         style={styles.receiptsList}
       />
     </View>

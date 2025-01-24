@@ -14,6 +14,7 @@ const MapScreen = () => {
     longitude: 11.501346, // Initial longitude
   });
   const [driverName, setDriverName] = useState("");
+  const [driverUsername, setDriverUsername] = useState("");
 
   const {latitude, longitude, errorMsg } = useLocation();
 //at this point it was working fine
@@ -41,6 +42,7 @@ const MapScreen = () => {
             const driverDoc = await getDoc(driverRef);
             if (driverDoc.exists()) {
               setDriverName(driverDoc.data().name || "Your Driver");
+              setDriverUsername(driverDoc.data().username || "Your Driver");
             }
           }
         } else {
@@ -132,7 +134,7 @@ const MapScreen = () => {
   }
 
 
-  const description = userData?.role === 'Driver' ? 'Your current position' : `${driverName}'s current position`;
+  const description = userData?.role === 'Driver' ? 'Your current position' : `${driverUsername}'s current position`;
 
 
 return (
@@ -151,7 +153,7 @@ return (
         latitude: markerLocation.latitude,
         longitude: markerLocation.longitude,
       }}
-      title={userData?.role === 'Driver' ? "Your Location" : driverName}
+      title={userData?.role === 'Driver' ? "Your Location" : driverUsername}
       description={description}
     />
   </MapView>
