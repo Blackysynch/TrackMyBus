@@ -50,11 +50,8 @@ const RegisterPage = () => {
         email,
         phoneNumber,
         role,
-        location: null,// location ? new GeoPoint(location.latitude, location.longitude) : null,
-        // location: {
-        //   latitude: location.latitude,
-        //   longitude: location.longitude,
-        // },
+        location: null,
+        receipts: [], // Add empty receipts array
         createdAt: new Date().toISOString(),
       });
       console.log("User data saved to Firestore");
