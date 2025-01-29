@@ -12,7 +12,7 @@ const LandingPage = () => {
       <Image source={IctLogo} style={styles.ictlogo} />
       <Text>Know the location of the bus...</Text>
       <Feather name="map" size={190} color="black" style={styles.maplogo} />
-      <Link href="/role"   asChild>
+      <Link href="/login-page"   asChild>
         <Pressable>
           <Text style={styles.buttonText} >Login <FontAwesome name="sign-in" size={24} color="black" /></Text>
         </Pressable>

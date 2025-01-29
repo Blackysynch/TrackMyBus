@@ -1,35 +1,80 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
 import { View, Text, StyleSheet, Image, Pressable, TouchableOpacity, Alert, TextInput } from "react-native";
 import IctLogo from "@/assets/images/ictlogo.png";
-import Feather from "@expo/vector-icons/Feather";
-import {Link } from "expo-router";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import {Link , useRouter} from "expo-router";
+// import FontAwesome from '@expo/vector-icons/FontAwesome';
+
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "@/firebaseConfig";
+import { doc, setDoc} from "@firebase/firestore";
 
 //this is the landing page
 
 const RegisterPage = () => {
+  
+  const [username, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [role, setRole] = useState('Student'); //default is student
+    
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-     const [uname, setName] = useState('');
-     const [email, setEmail] = useState('');
-     const [phoneNumber, setPhoneNumber] = useState('');
-     const [password, setPassword] = useState('');
-     const [password2, setPassword2] = useState('');
-     const [isValidEmail, setIsValidEmail] = useState(false);
 
-     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-//     const handlePress = () => {
-//     // Disable the button
-//     setIsButtonDisabled(true);
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match.");
+      return;
+    }
 
-//     // Show an alert or perform an action
-//     Alert.alert("Button Pressed", "The button has been temporarily disabled.");
+    if (!username || !email || !phoneNumber || !password || !role) {
+      Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
 
-//     // Re-enable the button after 3 seconds (3000 milliseconds)
-//     setTimeout(() => {
-//       setIsButtonDisabled(false);
-//     }, 3000);
-//   };
+    setLoading(true);
+
+    try {
+      // Step 1: Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("User created")
+      const user = userCredential.user;//this is before major change
+      
+      try{
+      // Step 3: Save additional user data to Firestore
+      await setDoc(doc(db, "/users", user.uid), {
+        username,
+        email,
+        phoneNumber,
+        role,
+        location: null,
+        receipts: [], // Add empty receipts array
+        createdAt: new Date().toISOString(),
+      });
+      console.log("User data saved to Firestore");
+    }catch (error) {
+      console.error("Error saving user data to Firestore:", error.message);
+    }
+
+      router.replace("/login-page");
+      console.log('User details saved');
+      // Redirect to login page or home page after successful registration
+      console.log("User  registered and details saved:", user.uid);
+      //Alert.alert("Success", "Registration successful!");
+
+    } catch (error) {
+      console.error('Error occurred:', error);
+      console.error("Error registering user:", error.message);
+    } finally {
+      setLoading(false);
+      const router = useRouter();
+      router.replace('/login-page');
+    }
+  };
+
 
 
   return (
@@ -37,39 +82,59 @@ const RegisterPage = () => {
       <Image source={IctLogo} style={styles.ictlogo} />
       <TextInput
         style={styles.input}
-        placeholder="Full Name"
-        value={uname}
+        placeholder="UserName"
+        value={username}
         editable={true}
+        onChangeText={(text) => setUserName(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="ICTU - Email"
         value={email}
+        editable={true}
+        onChangeText={(text) => setEmail(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Phone number"
         value={phoneNumber}
-        secureTextEntry
+        editable={true}
+        onChangeText={(text) => setPhoneNumber(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
         value={password}
+        editable={true}
+        onChangeText={(text) => setPassword(text)}
         secureTextEntry
       />
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
-        value={password2}
+        value={confirmPassword}
+        
+        editable={true}
+        onChangeText={(text) => setConfirmPassword(text)}
         secureTextEntry
       />
-      `{" "}
-      <Link href="/login-page" asChild>
-        <Pressable>
-          <Text style={styles.buttonText}>Submit</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Role (student/driver)"
+        value={role}
+        editable={true}
+        onChangeText={(text) => setRole(text)}
+      />
+
+      {/* <Link asChild> */}
+        <Pressable
+          style={[styles.button, loading && styles.disabledButton]}
+          onPress={handleRegister}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>{loading ? "Registering..." : "Register"}</Text>
         </Pressable>
-      </Link>
+      {/* </Link> */}
       <Link href="/login-page" asChild>
         {/* NB: we need a redirection once sign up is complete */}
         <Pressable>

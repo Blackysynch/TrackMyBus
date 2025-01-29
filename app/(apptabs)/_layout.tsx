@@ -32,38 +32,38 @@ export default function TabLayout() {
         }),
       }}>
       <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) =><Feather name="map" size={24} color="black" />,
-        }}
-      />
-      <Tabs.Screen
         name="map"
         options={{
-          title: 'map',
+          title: 'Map',
           tabBarIcon: ({ color }) => <Feather name="map" size={24} color="black" />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'profile',
+          title: 'Profile',
           tabBarIcon: ({ color }) => <Feather name="user" size={24} color="black" />,
         }}
       />
       <Tabs.Screen
         name="notifications"
         options={{
-          title: 'notifications',
+          title: 'Notifications',
           tabBarIcon: ({ color }) => <Feather name="bell" size={24} color="black" />,
         }}
       />
       <Tabs.Screen
         name="receipts"
         options={{
-          title: 'receipts',
+          title: 'Receipts',
           tabBarIcon: ({ color }) => <Feather name="file-text" size={24} color="black" />,
+        }}
+      />
+      <Tabs.Screen
+        name="testmap"
+        options={{
+          title: 'testmap',
+          tabBarIcon: ({ color }) => <Feather name="map" size={24} color="black" />,
         }}
       />
 
