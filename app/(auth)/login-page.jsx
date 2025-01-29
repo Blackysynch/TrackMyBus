@@ -30,9 +30,8 @@ const LoginPage = () => {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log("User  logged in:", user.uid);
-        router.replace("/(apptabs)/map");
-
+        console.log("User logged in:", user.uid);
+        router.replace("/(apptabs)/testmap"); // Update login redirect to match new tab layout
 
         const userRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userRef);

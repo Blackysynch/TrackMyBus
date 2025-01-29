@@ -6,37 +6,32 @@ import useLocation from '@/hooks/useLocation';
 import { auth, db } from "@/firebaseConfig";
 import { doc, getDoc, collection, setDoc, onSnapshot } from "@firebase/firestore";
 
-const MapScreen = () => {
-   
+export default function TestMap() {
   const [userData, setUserData] = useState(null);
   const [markerLocation, setMarkerLocation] = useState({
-    latitude: 3.844119, // Initial latitude
-    longitude: 11.501346, // Initial longitude
+    latitude: 3.844119,
+    longitude: 11.501346,
   });
   const [driverName, setDriverName] = useState("");
   const [driverUsername, setDriverUsername] = useState("");
 
   const {latitude, longitude, errorMsg } = useLocation();
-//at this point it was working fine
-//get user data
-
 
   useEffect(() =>{
     const fetchUserData = async () => {
       try{
         const uid = auth.currentUser?.uid;
-      if (!uid) {
-        console.log("User not logged in");
-        return;
-      }
+        if (!uid) {
+          console.log("User not logged in");
+          return;
+        }
         const userRef = doc(db, 'users',uid);
-        const userDoc = await  getDoc(userRef); //await
+        const userDoc = await getDoc(userRef);
 
         if (userDoc.exists()) {
           const data = userDoc.data();
           setUserData(data);
           
-          // If user is a student, fetch driver's name
           if (data.role === 'Student' && data.driverUID) {
             const driverRef = doc(db, 'users', data.driverUID);
             const driverDoc = await getDoc(driverRef);
@@ -53,11 +48,10 @@ const MapScreen = () => {
       }
     };
     fetchUserData();
-      }, []);
+  }, []);
 
-//update matker location
   useEffect(() => {
-    if (latitude  !== markerLocation.latitude && longitude !== markerLocation.longitude) {
+    if (latitude !== markerLocation.latitude && longitude !== markerLocation.longitude) {
       setMarkerLocation({
         latitude,
         longitude,
@@ -65,15 +59,11 @@ const MapScreen = () => {
     }
   }, [latitude, longitude]);
 
-  console.log("the longitude and latitudes are:", longitude, latitude);
-
-
-  // driver location gets updated
   useEffect(() => {
     if (userData?.role === "Driver" && latitude && longitude) {
       const updateDriverLocation = async () => {
         try {
-          const driverRef = doc(db, "driverLocations", auth.currentUser.uid); // Store location in 'driverLocations'
+          const driverRef = doc(db, "driverLocations", auth.currentUser.uid);
           await setDoc(driverRef, {
             latitude,
             longitude,
@@ -88,8 +78,8 @@ const MapScreen = () => {
     }
   }, [latitude, longitude, userData]);
 
-  const driverUID = userData?.driverUID
-  //user listens to Driver's location
+  const driverUID = userData?.driverUID;
+  
   useEffect(() => {
     if (userData?.role === "Student") {
       if (!driverUID) {
@@ -116,7 +106,6 @@ const MapScreen = () => {
     }
   }, [userData, driverUID]);
 
-
   if (errorMsg) {
     return (
       <View>
@@ -133,33 +122,30 @@ const MapScreen = () => {
     );
   }
 
-
   const description = userData?.role === 'Driver' ? 'Your current position' : `${driverUsername}'s current position`;
 
-
-return (
-  <View style={styles.container}>
-    <MapView
-    style={styles.map}
-    region={{
-      latitude: markerLocation.latitude,
-      longitude: markerLocation.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    }}
-  >
-    <Marker
-      coordinate={{
-        latitude: markerLocation.latitude,
-        longitude: markerLocation.longitude,
-      }}
-      title={userData?.role === 'Driver' ? "Your Location" : driverUsername}
-      description={description}
-    />
-  </MapView>
-  </View>
-);
-
+  return (
+    <View style={styles.container}>
+      <MapView
+        style={styles.map}
+        region={{
+          latitude: markerLocation.latitude,
+          longitude: markerLocation.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+      >
+        <Marker
+          coordinate={{
+            latitude: markerLocation.latitude,
+            longitude: markerLocation.longitude,
+          }}
+          title={userData?.role === 'Driver' ? "Your Location" : driverUsername}
+          description={description}
+        />
+      </MapView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -185,5 +171,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-export default MapScreen;

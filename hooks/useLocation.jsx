@@ -1,12 +1,12 @@
-import { StyleSheet, Text, TouchableOpaciy, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, {useEffect, useState} from 'react';
 import * as Location from "expo-location";
 
 //every thign was ok here
 const useLocation = () => {
-    const [errorMsg, setErrorMsg] = useState("", "");
-    const [latitude, setLatitude] = useState("");
-    const [longitude, setLongitude] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [latitude, setLatitude] = useState(3.844119); // Initial latitude
+    const [longitude, setLongitude] = useState(11.501346); // Initial longitude
 
 
     const getUserLocation =  async () => {
@@ -29,12 +29,6 @@ const useLocation = () => {
           setLatitude(latitude);
           setLongitude(longitude);
     
-          // let response = await Location.reverseGeocodeAsync({
-          //   latitude,
-          //   longitude
-          // })
-    
-          // console.log('USER LOCATION IS', response);
         }
       };
 
